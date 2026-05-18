@@ -1,25 +1,21 @@
 <?php
-// DATABASE CREDENTIALS
-$host     = getenv('MYSQLHOST')     ?: 'localhost';
-$port     = getenv('MYSQLPORT')     ?: '3306';
-$dbname   = getenv('MYSQLDATABASE') ?: 'ims_db';
-$username = getenv('MYSQLUSER')     ?: 'root';
-$password = getenv('MYSQLPASSWORD') ?: '';
+// DATABASE CONNECTION SETTINGS
+$host    = 'localhost';
+$db      = 'ims_db';
+$user    = 'root';
+$pass    = '';
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
 
 try {
-    // CONNECTION STRING
-    $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
-    
-    // PDO
-    $pdo = new PDO($dsn, $username, $password, [
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES   => false,
-    ]);
-
-    echo "Database connected successfully!"; 
-
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+     $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (\PDOException $e) {
+     die("Database Connection Error: " . $e->getMessage());
 }
 ?>
