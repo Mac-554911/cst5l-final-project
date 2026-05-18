@@ -50,8 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['btn_register'])) {
         $sql = "INSERT INTO employees (first_name, last_name, email_address, contact_number, username, password) 
                 VALUES (:first_name, :last_name, :email_ad, :contact_nb, :username, :password)";
                 
-        $statement = $pdo->prepare($sql);
-        $statement->execute([
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
             'first_name'   => $first_name,
             'last_name'    => $last_name,
             'email_ad'     => $email,
