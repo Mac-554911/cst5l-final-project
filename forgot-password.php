@@ -8,6 +8,7 @@ if (isset($_SESSION['employee_id'])) {
     exit();
 }
 
+// XSS CLEAN UP FILTER UTILITY FUNCTION
 class security_helper {
     public static function xss_clean($data) {
         if ($data === null) {
@@ -59,7 +60,6 @@ class password_recovery_manager {
             ]);
 
             // ACADEMIC BACKBONE FALLBACK simulation
-            // In production, use PHPMailer to send this link via SMTP.
             $reset_link = "reset-password.php?token=" . $token;
             
             return [
@@ -121,7 +121,7 @@ $controller->handle_post_requests();
         </form>
 
         <div class="form-navigation">
-            <p><a href="login.php">Back to Login</a></p>
+            <p><a href="login-page.php">Back to Login</a></p>
         </div>
     </div>
 </body>

@@ -8,6 +8,7 @@ if (isset($_SESSION['employee_id'])) {
     exit();
 }
 
+// XSS CLEAN UP FILTER UTILITY FUNCTION
 class security_helper {
     public static function xss_clean($data) {
         if ($data === null) {
@@ -43,7 +44,9 @@ class password_reset_manager {
             $sql = "SELECT id, token_expiry FROM employees WHERE reset_token = :token";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute(['token' => $token]);
-            $user = $stmt->fetch();
+            
+            // FORCE EXPLICIT ASSOCIATIVE FETCH CODES
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // VERIFY TOKEN EXISTENCE
             if (!$user) {
