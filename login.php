@@ -14,8 +14,7 @@ class security_helper {
         if ($data === null) {
             return '';
         }
-        $data = htmlspecialchars($data, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
-        return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $data);
+        return htmlspecialchars($data, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
     }
 }
 
@@ -38,7 +37,9 @@ class authentication_manager {
 
             // USER AND PASSWORD VERIFICATION
             if ($user && password_verify($password, $user['password'])) {
-                
+                // Regenerate session for a basic layer of protection
+                session_regenerate_id(true);
+
                 // INITIALIZE ACTIVE SESSIONS
                 $_SESSION['user_id']     = $user['id'];
                 $_SESSION['employee_id'] = $user['employee_id'];
@@ -57,7 +58,10 @@ class authentication_manager {
                 ];
             }
         } catch (PDOException $e) {
-            die("Database Error: " . $e->getMessage());
+            return [
+                'status'  => false,
+                'message' => "Database Error: " . $e->getMessage()
+            ];
         }
     }
 }
@@ -93,42 +97,41 @@ $controller->handle_post_requests();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
+    <link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Inventory Management System</h1>
-        <h3>Login</h3>
+<body class="auth-page">
+    <div class="auth-card">
+        <h1 class="auth-heading">Inventory System</h1>
+        <h3 class="auth-subheading">Login</h3>
 
         <?php if ($controller->login_result !== null): ?>
-            <div>
+            <div class="alert <?php echo $controller->login_result['status'] ? 'alert--success' : 'alert--error'; ?>">
                 <p><strong><?php echo security_helper::xss_clean($controller->login_result['message']); ?></strong></p>
             </div>
         <?php endif; ?>
 
-        <!-- Action file and POST method -->
-        <!-- Leave action empty to submit to its own filename self-reference safely -->
         <form action="" method="POST">
             <div class="form-group">
+                <label class="form-label">Username</label>
                 <input type="text" name="username" class="form-control" placeholder="Username" required>
             </div>
             <div class="form-group">
-                <!-- PASSWORD TOGGLE WRAPPER -->
-                <input type="password" name="password" id="txt_password" class="form-control" placeholder="Password" required>
-                <button type="button" onclick="toggle_visibility('txt_password', this)">Show</button>
+                <label class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" name="password" id="txt_password" class="form-control" placeholder="Password" required>
+                    <button type="button" class="btn--icon" onclick="toggle_visibility('txt_password', this)">Show</button>
+                </div>
             </div>
-            <button type="submit" name="btn_login" class="btn">Login</button>
+            <button type="submit" name="btn_login" class="btn btn--primary btn--full">Login</button>
         </form>
 
-        <!-- REDIRECT LINK TO OTHER PORTALS -->
-        <div class="form-navigation">
-            <p>Don't have an account? <a href="registration-page.php">Sign Up Here</a></p>
+        <div class="auth-nav">
+            <p>Don't have an account? <a href="registration.php">Sign Up Here</a></p>
             <p><a href="forgot-password.php">Forgot Password?</a></p>
         </div>
     </div>
 
-    <!-- DYNAMIC VISIBILITY SCRIPT -->
     <script>
         function toggle_visibility(input_id, btn_el) {
             const input = document.getElementById(input_id);

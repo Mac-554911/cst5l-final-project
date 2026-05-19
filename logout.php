@@ -1,4 +1,5 @@
 <?php
+// logout.php
 session_start();
 
 // LOGOUT HANDLER UTILITY FUNCTION
@@ -26,6 +27,6 @@ class session_manager {
 
 // APP INITIALIZATION CORNER
 session_manager::destroy_user_session();
-header("Location: login-page.php");
+header("Location: login.php");
 exit();
 ?>
