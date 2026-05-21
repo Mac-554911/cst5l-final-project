@@ -873,7 +873,7 @@ select.form-control {
 .topbar_search {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 /* SEARCH INPUT WRAPPER IN TOPBAR */
@@ -881,25 +881,57 @@ select.form-control {
   position: relative;
   display: flex;
   align-items: center;
+  flex-grow: 1;
 }
 
-.topbar_search-input-wrapper .topbar_search-icon {
-  position: absolute;
-  left: var(--space-3);
-  color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-}
-
+/* This is the text box itself */
 .topbar_search-input-wrapper .form-control {
-  padding-left: 36px;
-  max-width: 260px;
+  padding-left: var(--space-4);
+  padding-right: 44px; /* Room so text doesn't slide under the button */
+  max-width: 280px;
   height: 38px;
   border-radius: var(--radius-full);
   background: var(--color-bg);
-  border-color: var(--color-border);
+  border: 1.5px solid var(--color-border);
   font-size: var(--text-sm);
+  width: 100%;
+}
+
+.topbar_search-submit-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  /* Uses your primary branding purple shifting into your danger pink accent */
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-danger) 100%);
+  border: none;
+  border-radius: var(--radius-full);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-primary-text);
+  box-shadow: var(--shadow-xs);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.topbar_search-submit-btn:hover {
+  transform: translateY(-50%) scale(1.05);
+  opacity: 0.95;
+}
+
+.topbar_search-submit-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.topbar_search-submit-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.5;
 }
 
 /* NOTIFICATION BELL BUTTON IN TOPBAR */
