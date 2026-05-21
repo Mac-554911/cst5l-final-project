@@ -54,10 +54,16 @@ class employee_manager {
                 return ['status' => false, 'message' => "Error: Username is already registered."];
             }
 
-            // Simple Auto ID calculation strategy
-            $id_stmt = $this->pdo->query("SELECT COUNT(*) as total FROM employees");
-            $count_row = $id_stmt->fetch(PDO::FETCH_ASSOC);
-            $employee_id = "EID" . ($count_row['total'] + 1);
+            // SIMPLE AUTO ID CALCULATION
+            $id_stmt = $this->pdo->query("SELECT employee_id FROM employees");
+            $max_num = 0;
+            while ($row = $id_stmt->fetch(PDO::FETCH_ASSOC)) {
+                $num = (int) str_replace('EID', '', $row['employee_id']);
+                if ($num > $max_num) {
+                    $max_num = $num;
+                }
+            }
+            $employee_id = "EID" . ($max_num + 1);
 
             $sql = "INSERT INTO employees (employee_id, first_name, last_name, email_address, contact_number, username, password) 
                     VALUES (:employee_id, :first_name, :last_name, :email_ad, :contact_nb, :username, :password)";
@@ -74,6 +80,7 @@ class employee_manager {
             ]);
 
             // SESSION INITIALIZATION
+            $_SESSION['user_id']     = $employee_id;
             $_SESSION['employee_id'] = $employee_id;
             $_SESSION['username']    = $username;
             $_SESSION['first_name']  = $first_name;
@@ -101,15 +108,14 @@ class registration_controller {
             $this->reg_result = $this->employee_mgr->register_employee(
                 trim($_POST['first_name']),
                 trim($_POST['last_name']),
-                trim($_POST['email']),
-                trim($_POST['contact_nb']),
+                trim($_POST['email_address']),
+                trim($_POST['contact_number']),
                 trim($_POST['username']),
                 $_POST['password'],
                 $_POST['confirm_password']
             );
-
             if ($this->reg_result['status'] === true) {
-                header("Refresh: 3; url=dashboard.php");
+                header("Refresh: 2; url=dashboard.php");
             }
         }
     }
@@ -123,73 +129,116 @@ $controller->handle_post_requests();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Registration Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawaii Store IMS — Sign Up</title>
     <link rel="stylesheet" href="assets/style.css">
 </head>
-<body class="auth-page">
+<body class="auth-page auth-page--scrollable">
     <div class="auth-card auth-card--wide">
-        <h1 class="auth-heading">Registration</h1>
-        <h3 class="auth-subheading">Create an account</h3>
+
+        <div class="auth-logo auth-logo--centered">
+    <div class="auth-logo_name">🌸 Kawaii Store IMS</div>
+</div>
+
+        <h1 class="auth-heading">Create an account</h1>
+        <p class="auth-subheading">Fill in your details to get started.</p>
 
         <?php if ($controller->reg_result !== null): ?>
             <div class="alert <?php echo $controller->reg_result['status'] ? 'alert--success' : 'alert--error'; ?>">
-                <p><strong><?php echo security_helper::xss_clean($controller->reg_result['message']); ?></strong></p>
+                <div class="alert_body">
+                    <div class="alert_message"><?php echo security_helper::xss_clean($controller->reg_result['message']); ?></div>
+                </div>
             </div>
         <?php endif; ?>
 
         <form action="" method="POST">
-            <div class="form-group">
-                <label class="form-label">First Name</label>
-                <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Last Name</label>
-                <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4);">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" name="first_name" class="form-control" placeholder="First name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" name="last_name" class="form-control" placeholder="Last name" required>
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Email Address</label>
-                <input type="email" name="email" class="form-control" placeholder="Email" required>
+                <input type="email" name="email_address" class="form-control" placeholder="email@kawaiistore.com" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Contact Number</label>
-                <input type="text" name="contact_nb" class="form-control" placeholder="Contact Number" required>
+                <input type="text" name="contact_number" class="form-control" placeholder="+63 912 345 6789" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control" placeholder="Username" required>
+                <input type="text" name="username" class="form-control" placeholder="Choose a username" required>
             </div>
             <div class="form-group">
-                <label class="form-label">Password</label>
+                <label class="form-label" style="display:flex; align-items:center; gap:var(--space-2);">
+                    Password
+                    <button type="button" class="btn--info" onclick="document.getElementById('dlg_pw_requirements').classList.add('is-open')" aria-label="Password requirements">?</button>
+                </label>
                 <div class="input-wrapper">
-                    <input type="password" name="password" id="txt_password" class="form-control" placeholder="Password" required>
-                    <button type="button" class="btn--icon" onclick="toggle_visibility('txt_password', this)">Show</button>
-                    <button type="button" class="btn--info" onclick="alert('Must have: 10+ chars, 1 uppercase, 1 number, 1 symbol')">?</button>
+                    <input type="password" name="password" id="txt_reg_password" class="form-control" placeholder="Create a strong password" required>
+                    <button type="button" class="btn--icon" onclick="toggle_visibility('txt_reg_password', this)" aria-label="Toggle password visibility">
+                        <svg id="txt_reg_password_eye_show" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg id="txt_reg_password_eye_hide" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
                 </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Confirm Password</label>
                 <div class="input-wrapper">
-                    <input type="password" name="confirm_password" id="txt_confirm_password" class="form-control" placeholder="Re-write Password" required>
-                    <button type="button" class="btn--icon" onclick="toggle_visibility('txt_confirm_password', this)">Show</button>
+                    <input type="password" name="confirm_password" id="txt_confirm_password" class="form-control" placeholder="Repeat your password" required>
+                    <button type="button" class="btn--icon" onclick="toggle_visibility('txt_confirm_password', this)" aria-label="Toggle confirm password visibility">
+                        <svg id="txt_confirm_password_eye_show" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg id="txt_confirm_password_eye_hide" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
                 </div>
             </div>
-            <button type="submit" name="btn_register" class="btn btn--primary btn--full">Sign Up</button>
+            <button type="submit" name="btn_register" class="btn btn--primary btn--full">Create Account</button>
         </form>
 
         <div class="auth-nav">
-            <p>Already have an account? <a href="login.php">Login Here</a></p>
+            <p>Already have an account? <a href="login.php">Login here</a></p>
+        </div>
+    </div>
+
+    <!-- PASSWORD REQUIREMENTS DIALOG -->
+    <div class="dialog-overlay" id="dlg_pw_requirements" onclick="if(event.target===this)this.classList.remove('is-open')">
+        <div class="dialog">
+            <div class="dialog_header">
+                <span class="dialog_title">Password Requirements</span>
+                <button class="dialog_close" onclick="document.getElementById('dlg_pw_requirements').classList.remove('is-open')">&times;</button>
+            </div>
+            <div class="dialog_body">
+                <ul style="display:flex; flex-direction:column; gap:var(--space-3); font-size:var(--text-sm); color:var(--color-text-secondary);">
+                    <li>✅ At least <strong>10 characters</strong> long</li>
+                    <li>✅ At least <strong>1 uppercase letter</strong> (A–Z)</li>
+                    <li>✅ At least <strong>1 number</strong> (0–9)</li>
+                    <li>✅ At least <strong>1 special character</strong> (e.g. !@#$%)</li>
+                </ul>
+            </div>
+            <div class="dialog_footer">
+                <button class="btn btn--primary" onclick="document.getElementById('dlg_pw_requirements').classList.remove('is-open')">Got it!</button>
+            </div>
         </div>
     </div>
 
     <script>
         function toggle_visibility(input_id, btn_el) {
             const input = document.getElementById(input_id);
+            const eye_show = document.getElementById(input_id + '_eye_show');
+            const eye_hide = document.getElementById(input_id + '_eye_hide');
             if (input.type === "password") {
                 input.type = "text";
-                btn_el.textContent = "Hide";
+                eye_show.style.display = "none";
+                eye_hide.style.display = "block";
             } else {
                 input.type = "password";
-                btn_el.textContent = "Show";
+                eye_show.style.display = "block";
+                eye_hide.style.display = "none";
             }
         }
     </script>

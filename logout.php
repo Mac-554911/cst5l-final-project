@@ -1,5 +1,4 @@
 <?php
-// logout.php
 session_start();
 
 // LOGOUT HANDLER UTILITY FUNCTION
