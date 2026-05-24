@@ -4,7 +4,7 @@ require_once 'config/db.php';
 
 // UNAUTHORIZED ACCESS PROTECT
 if (!isset($_SESSION['employee_id'])) {
-    header("Location: login.php");
+    header("Location: index.php");
     exit();
 }
 

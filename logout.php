@@ -26,6 +26,6 @@ class session_manager {
 
 // APP INITIALIZATION CORNER
 session_manager::destroy_user_session();
-header("Location: login.php");
+header("Location: index.php");
 exit();
 ?>

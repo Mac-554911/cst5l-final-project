@@ -71,7 +71,7 @@ class reset_password_controller {
             $this->reset_result = $this->reset_mgr->update_password($token, $password, $confirm_pw);
             
             if ($this->reset_result['status'] === true) {
-                header("Refresh: 3; url=login.php");
+                header("Refresh: 3; url=index.php");
             }
         }
     }

@@ -96,7 +96,7 @@ $controller->handle_post_requests();
         </form>
 
         <div class="auth-nav">
-            <p><a href="login.php">Back to Login</a></p>
+            <p><a href="index.php">Back to Login</a></p>
         </div>
     </div>
 </body>
