@@ -1147,7 +1147,7 @@ $initials = strtoupper(substr($profile_data['first_name'] ?? $_SESSION['first_na
                     </div>
                     <div class="form-group">
                         <label class="form-label">Model</label>
-                        <input type="text" name="model" class="form-control" placeholder="Model" required maxlength="50">
+                        <input type="text" name="model" class="form-control" placeholder="Model" maxlength="50">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Color</label>
@@ -1204,7 +1204,7 @@ $initials = strtoupper(substr($profile_data['first_name'] ?? $_SESSION['first_na
                     </div>
                     <div class="form-group">
                         <label class="form-label">Model</label>
-                        <input type="text" name="model" id="edit_product_model" class="form-control" required maxlength="50">
+                        <input type="text" name="model" id="edit_product_model" class="form-control" maxlength="50">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Color</label>
