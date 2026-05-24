@@ -97,7 +97,7 @@ $controller->handle_post_requests();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kawaii Store IMS — Login</title>
+    <title>Kawaii Store IMS | Login</title>
     <link rel="stylesheet" href="assets/style.css">
 </head>
 <body class="auth-page">
