@@ -3,7 +3,7 @@
 $host    = getenv('MYSQLHOST') ?: 'localhost'; 
 $db      = getenv('MYSQLDATABASE') ?: 'ims_db';
 $user    = getenv('MYSQLUSER') ?: 'root';
-$pass    = getenv('MYSQLPASSWORD') ?: '';
+$pass    = getenv('MYSQLPASSWORD') ?: getenv('MYSQLROOT_PASSWORD') ?: '';
 $port    = getenv('MYSQLPORT') ?: '3306';
 $charset = 'utf8mb4';
 
