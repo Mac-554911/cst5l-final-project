@@ -48,8 +48,9 @@ class product_manager {
             return "Error: Field content exceeds character limits.";
         }
 
-        // TREAT EMPTY EXPIRY AS NULL
+        // TREAT EMPTY EXPIRY AND MODEL AS NULL
         $expiry_date = (!empty($expiry_date)) ? $expiry_date : null;
+        $model = (!empty(trim($model))) ? trim($model) : null;
         
         try {
             $product_id = $this->generate_automatic_id();
@@ -73,8 +74,9 @@ class product_manager {
             return "error:Field content exceeds character limits.";
         }
 
-        // TREAT EMPTY EXPIRY AS NULL
+        // TREAT EMPTY EXPIRY AND MODEL AS NULL
         $expiry_date = (!empty($expiry_date)) ? $expiry_date : null;
+        $model = (!empty(trim($model))) ? trim($model) : null;
 
         try {
             $sql = "UPDATE products SET name=:name, brand=:brand, model=:model, color=:color, expiry_date=:expiry_date, supplier_id=:supplier_id, stock=:stock WHERE product_id=:product_id";
