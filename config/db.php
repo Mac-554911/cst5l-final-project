@@ -4,7 +4,6 @@ $host = $_ENV['MYSQLHOST'] ?? getenv('MYSQLHOST') ?? 'localhost';
 $port = $_ENV['MYSQLPORT'] ?? getenv('MYSQLPORT') ?? '3306';
 $dbname = $_ENV['MYSQLDATABASE'] ?? getenv('MYSQLDATABASE') ?? '';
 $user = $_ENV['MYSQLUSER'] ?? getenv('MYSQLUSER') ?? 'root';
-
 $pass = $_ENV['MYSQLPASSWORD'] ?? getenv('MYSQLPASSWORD') ?? getenv('MYSQLROOT_PASSWORD') ?? '';
 
 try {
